@@ -1,6 +1,11 @@
 import os
 
-from dagster import Definitions, load_assets_from_modules
+from dagster import (
+    Definitions,
+    ScheduleDefinition,
+    define_asset_job,
+    load_assets_from_modules,
+)
 from dagster_dbt import DbtCliResource
 
 from . import assets
@@ -13,4 +18,5 @@ defs = Definitions(
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
     },
+    #schedules={ScheduleDefinition(job=define_asset_job("all_assets", selection="*"), cron_schedule="@daily")},
 )

@@ -401,6 +401,25 @@ ruff = ["ruff (==0.1.7)"]
 test = ["buildkite-test-collector", "docker", "grpcio-tools (>=1.44.0)", "mock (==3.0.5)", "morefs[asynclocal]", "mypy-protobuf", "objgraph", "pytest (>=7.0.1)", "pytest-cov (==2.10.1)", "pytest-dependency (==0.5.1)", "pytest-mock (==3.3.1)", "pytest-rerunfailures (==10.0)", "pytest-runner (==5.2)", "pytest-xdist (==3.3.1)", "responses (<=0.23.1)", "syrupy (<4)", "tox (==3.25.0)"]
 
 [[package]]
+name = "dagster-airbyte"
+version = "0.21.13"
+description = "Package for integrating Airbyte with Dagster."
+optional = false
+python-versions = "*"
+files = [
+    {file = "dagster-airbyte-0.21.13.tar.gz", hash = "sha256:0943bc28580ac384b27f223e8751a6d37776110c2147587a2ac9f709f5874f37"},
+    {file = "dagster_airbyte-0.21.13-py3-none-any.whl", hash = "sha256:9f8a0b227c249053b92b5f62a99e386701baff8fbf78fc65aef8b7620bd5e0c2"},
+]
+
+[package.dependencies]
+dagster = "1.5.13"
+requests = "*"
+
+[package.extras]
+managed = ["dagster-managed-elements (==0.21.13)"]
+test = ["requests-mock"]
+
+[[package]]
 name = "dagster-dbt"
 version = "0.21.13"
 description = "A Dagster integration for dbt"
@@ -2795,4 +2814,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "9f70d6cbe89a8ee5455be625a0abf95ccdc4d46b18916936f53bd3ca57f3a758"
+content-hash = "b61086f6b267cf09326c570840a33efa8212f8d967146175554c383cea92f322"

@@ -1,9 +1,13 @@
-from pathlib import Path
-
 from dagster import AssetExecutionContext, asset
+from dagster_airbyte import load_assets_from_airbyte_instance
 from dagster_dbt import DbtCliResource, dbt_assets, get_asset_key_for_model
 
-from .constants import dbt_manifest_path
+from .constants import airbyte_instance, dbt_manifest_path
+
+# Use the airbyte_instance resource we defined in Step 1
+airbyte_assets = load_assets_from_airbyte_instance(
+    airbyte_instance, key_prefix=["superstore"]
+)
 
 
 @dbt_assets(manifest=dbt_manifest_path)
@@ -12,7 +16,9 @@ def dbt_project_assets(context: AssetExecutionContext, dbt: DbtCliResource):
 
 
 @asset(
-    deps=[get_asset_key_for_model([dbt_project_assets], "stg_superstore__orders")],
+    deps=[
+        get_asset_key_for_model([dbt_project_assets], "stg_superstore__orders"),
+    ]
 )
 def hello_world():
     return "Hello World"
