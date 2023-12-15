@@ -41,28 +41,11 @@ resource "postgresql_role" "roles" {
   login    = false
 }
 
-# Create users
-resource "postgresql_role" "airbyte_user" {
-  provider = postgresql.postgres
-  name     = "airbyte_user"
-  password = "airbyte"
-  login    = true
-  roles    = [postgresql_role.roles["airbyte_role"].name]
-}
-
-resource "postgresql_role" "dagster_user" {
-  provider = postgresql.postgres
-  name     = "dagster_user"
-  password = "dagster"
-  login    = true
-  roles    = [postgresql_role.roles["dagster_role"].name]
-}
-
 # Grant permissions
-resource "postgresql_grant" "airbyte_role" {
+resource "postgresql_grant" "loader_role" {
   provider    = postgresql.postgres
-  database    = postgresql_database.databases["raw"].name
-  role        = postgresql_role.roles["airbyte_role"].name
+  database    = postgresql_database.databases["analytics"].name
+  role        = postgresql_role.roles["loader_role"].name
   object_type = "database"
   privileges  = ["CREATE", "TEMPORARY", "CONNECT"]
 }
@@ -75,29 +58,45 @@ resource "postgresql_grant" "dagster_role" {
   privileges  = ["CREATE", "TEMPORARY", "CONNECT"]
 }
 
-resource "airbyte_destination_postgres" "destination_postgres" {
-  provider = airbyte.airbyte
+# Create users
+resource "postgresql_role" "loader_user" {
+  provider = postgresql.postgres
+  name     = "loader_user"
+  password = "loader"
+  login    = true
+  roles    = [postgresql_role.roles["loader_role"].name]
+}
 
+resource "postgresql_role" "dagster_user" {
+  provider = postgresql.postgres
+  name     = "dagster_user"
+  password = "dagster"
+  login    = true
+  roles    = [postgresql_role.roles["dagster_role"].name]
+}
+
+# Airbyte
+resource "airbyte_destination_postgres" "destination_postgres" {
+  provider     = airbyte.airbyte
+  name         = "analytics_postgres"
+  workspace_id = var.workspace_id
   configuration = {
-    database = postgresql_database.databases["raw"].name
+    database = postgresql_database.databases["analytics"].name
     host     = "localhost"
-    username = "airbyte_user"
-    password = "airbyte"
+    username = "loader_user"
+    password = "loader"
     port     = 5432
-    schema   = "countries"
+    schema   = "public"
     ssl_mode = {
       disable = {}
     }
-
   }
-
-  name         = "countries"
-  workspace_id = var.workspace_id
 }
 
 resource "airbyte_source_postgres" "superstore_postgres" {
-  provider = airbyte.airbyte
-
+  provider     = airbyte.airbyte
+  name         = "superstore_postgres"
+  workspace_id = var.workspace_id
   configuration = {
     database = postgresql_database.databases["global_superstore"].name
     host     = "localhost"
@@ -111,20 +110,38 @@ resource "airbyte_source_postgres" "superstore_postgres" {
       disable = {}
     }
   }
-  name         = "superstore_postgres"
-  workspace_id = var.workspace_id
+
 }
 
-
-resource "airbyte_connection" "my_connection" {
-  provider = airbyte.airbyte
-  data_residency = "auto"
-  destination_id = airbyte_destination_postgres.destination_postgres.destination_id
+resource "airbyte_connection" "superstore_to_postgres" {
+  provider             = airbyte.airbyte
+  data_residency       = "auto"
+  destination_id       = airbyte_destination_postgres.destination_postgres.destination_id
+  namespace_definition = "custom_format"
+  namespace_format     = "superstore"
   schedule = {
     schedule_type = "manual"
   }
   source_id = airbyte_source_postgres.superstore_postgres.source_id
+
+  configurations = {
+    streams = [
+      {
+        name      = "orders"
+        sync_mode = "full_refresh_overwrite"
+      },
+      {
+        name      = "people"
+        sync_mode = "full_refresh_overwrite"
+      },
+      {
+        name      = "returns"
+        sync_mode = "full_refresh_overwrite"
+      },
+    ]
+  }
 }
+
 
 
 
