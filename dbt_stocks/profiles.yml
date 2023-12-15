@@ -1,0 +1,13 @@
+dbt_stocks:
+  outputs:
+    dev:
+      dbname: analytics
+      host: localhost
+      user: loader_user
+      pass: loader
+      port: 5432
+      schema: dbt
+      threads: 1
+      type: postgres
+      
+  target: dev

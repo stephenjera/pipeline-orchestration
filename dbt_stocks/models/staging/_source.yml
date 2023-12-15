@@ -1,0 +1,11 @@
+sources:
+ - name:  superstore
+   database: analytics
+   schema: superstore
+   tables:
+    - name: orders
+      description: TODO
+    - name: people
+      description: TODO
+    - name: returns
+      description: TODO
