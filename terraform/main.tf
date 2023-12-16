@@ -32,7 +32,6 @@ resource "postgresql_database" "databases" {
   for_each = var.databases
   name     = each.value.name
 }
-
 # Create roles
 resource "postgresql_role" "roles" {
   provider = postgresql.postgres

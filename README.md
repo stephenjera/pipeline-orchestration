@@ -1,30 +1,83 @@
 # Pipline Orchestration
 
-## Setup the project
+## Setup database
 
-### db_setup
+- In the db_setup directory run:
 
-- Follow the instructions in the db_setup readme
+```shell
+docker compose up 
+```
 
-### Airbyte
+- In the db_setup/scripts folder run:
 
-- Clone Airbyte from GitHub ```git clone --depth=1 https://github.com/airbytehq/airbyte.git```
+```shell
+./load_databases.sh
+ ```
 
-- Switch into Airbyte directory ```cd airbyte```
+## Setup PG Admin
 
-- Start Airbyte ```./run-ab-platform.sh```
+Navigate to **localhost:5050**
+
+email = <test@mail.com>
+
+password = docker
+
+## Airbyte
+
+- Clone Airbyte from GitHub to root directory
+
+```shell
+git clone --depth=1 https://github.com/airbytehq/airbyte.git
+```
+
+- Switch into Airbyte directory
+
+```shell
+cd airbyte
+```
+
+- Start Airbyte
+
+```shell
+./run-ab-platform.sh
+```
 
 ## Terraform
 
-- ```cd terraform``` and run ```terraform apply --auto-approve```
+- Go to Terraform directory and run:
+
+```shell
+terraform import 'postgresql_database.databases["global_superstore"]' global_superstore
+```
+
+ ```shell
+ terraform apply --auto-approve
+ ```
 
 ## Dagster
 
-- In project root activate python env with ```poetry shell```
-- Install packages with ```poetry install --no-root```
-- Then ```pip install -e ".[dev]"```
-- ```cd dagster_project``` and run ```DAGSTER_DBT_PARSE_PROJECT_ON_LOAD=1 dagster dev```
+- In project root activate python env
 
-## Running project
+ ```shell
+poetry shell
+```
 
-NO terrafrom provider for yahoo finance so setup airbyt connecter and connection manually and then run sync
+```shell
+poetry install --no-root
+```
+
+In the dagster_project directory:
+
+```shell
+pip install -e ".[dev]"
+```
+
+- To run Dagster run:
+
+```shell
+export DAGSTER_HOME=$(pwd)
+```
+
+```shell
+DAGSTER_DBT_PARSE_PROJECT_ON_LOAD=1 dagster dev
+```
