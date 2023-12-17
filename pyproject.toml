@@ -17,6 +17,7 @@ dbt-postgres = "^1.7.3"
 dagster-webserver = "^1.5.12"
 dagster-dbt = "^0.21.13"
 dagster-airbyte = "^0.21.13"
+pandas = "^2.1.4"
 
 
 [build-system]
