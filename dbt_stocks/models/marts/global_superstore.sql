@@ -1,0 +1,32 @@
+select 
+    sso.city,
+    sso.sales,
+    sso.state,
+    sso.market,
+    sso.profit,
+    sso.region,
+    sso.row_id,
+    sso.country,
+    sso.segment,
+    sso.category,
+    sso.discount,
+    sso.order_id,
+    sso.quantity,
+    sso.ship_date,
+    sso.ship_mode,
+    sso.order_date,
+    sso.product_id,
+    sso.customer_id,
+    sso.postal_code,
+    sso.product_name,
+    sso.sub_category,
+    sso.customer_name,
+    sso.shipping_cost,
+    sso.order_priority,
+    ssr.region as region_returns,
+    ssr.returned,
+    ssp.person,
+    ssp.region as region_people
+from {{ ref('stg_superstore__orders') }} as sso
+left join {{ ref('stg_superstore__returns') }} ssr on sso.order_id = ssr.order_id
+left join  {{ ref('stg_superstore__people') }} ssp on sso.region = ssp.region

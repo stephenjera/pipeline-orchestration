@@ -17,8 +17,9 @@ def dbt_project_assets(context: AssetExecutionContext, dbt: DbtCliResource):
 
 @asset(
     deps=[
-        get_asset_key_for_model([dbt_project_assets], "stg_superstore__orders"),
-    ]
+        get_asset_key_for_model([dbt_project_assets], "global_superstore"),
+    ],
+    group_name="Hello",
 )
 def hello_world():
     return "Hello World"
